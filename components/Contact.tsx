@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { submitContactMessage } from "@/app/actions/messages";
 
 export default function Contact() {
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,7 +13,33 @@ export default function Contact() {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    type: "success" | "error";
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (modal.isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [modal.isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,23 +48,38 @@ export default function Contact() {
     const data = new FormData();
     data.append("name", formData.name);
     data.append("email", formData.email);
-    data.append("subject", formData.subject || "Project Inquiry");
+    data.append("subject", formData.subject || "New Project Discussion");
     data.append("message", formData.message);
 
     try {
-      await submitContactMessage(data);
-      setSent(true);
-    } catch (err) {
-      console.error("Message save error", err);
+      const res = await submitContactMessage(data);
+      if (res?.error) {
+        setModal({
+          isOpen: true,
+          type: "error",
+          title: "Submission Error",
+          message: res.error,
+        });
+      } else {
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setModal({
+          isOpen: true,
+          type: "success",
+          title: "Message Sent Successfully!",
+          message:
+            "Thank you for reaching out. Your inquiry has been delivered and I will get back to you shortly.",
+        });
+      }
+    } catch (err: any) {
+      setModal({
+        isOpen: true,
+        type: "error",
+        title: "Connection Error",
+        message:
+          err?.message || "Could not send message at this time. Please try again.",
+      });
     }
 
-    // Also trigger direct email client as fallback
-    const mailto = `mailto:kingwahley@gmail.com?subject=${encodeURIComponent(
-      formData.subject || "Project Inquiry"
-    )}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
-    )}`;
-    window.location.href = mailto;
     setSubmitting(false);
   };
 
@@ -47,12 +90,6 @@ export default function Contact() {
         <br />
         <span className="text-[#2C2C2C]">Together</span>
       </h2>
-
-      {sent && (
-        <div className="p-4 bg-emerald-950/70 border border-emerald-800 rounded-2xl text-emerald-300 text-xs font-bold uppercase tracking-wider">
-          ✓ Message saved to inbox and sent to Peter!
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 contact-element">
@@ -89,10 +126,10 @@ export default function Contact() {
             <option value="" disabled>
               Subject
             </option>
-            <option value="project">New Project Discussion</option>
-            <option value="freelance">Freelance Contract</option>
-            <option value="consulting">Consulting & Architecture</option>
-            <option value="other">Other Inquiry</option>
+            <option value="New Project Discussion">New Project Discussion</option>
+            <option value="Freelance Contract">Freelance Contract</option>
+            <option value="Consulting & Architecture">Consulting & Architecture</option>
+            <option value="Other Inquiry">Other Inquiry</option>
           </select>
 
           {/* Custom Chevron Arrow */}
@@ -131,6 +168,53 @@ export default function Contact() {
           {submitting ? "Sending..." : "Send Message"}
         </button>
       </form>
+
+      {/* Confirmation Feedback Modal rendered via React Portal directly to document.body */}
+      {mounted &&
+        modal.isOpen &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setModal({ ...modal, isOpen: false })}
+          >
+            <div
+              className="bg-[#161616] border border-[#262626] rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-6 shadow-2xl animate-fade-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl border border-[#262626] bg-neutral-900 shadow-inner">
+                {modal.type === "success" ? (
+                  <span className="text-emerald-400">✓</span>
+                ) : (
+                  <span className="text-red-400">⚠️</span>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-extrabold text-white font-display">
+                  {modal.title}
+                </h3>
+                <p className="text-xs text-neutral-400 leading-relaxed">
+                  {modal.message}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setModal({ ...modal, isOpen: false })}
+                className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-lg ${
+                  modal.type === "success"
+                    ? "bg-[#FF6B35] text-neutral-950 hover:bg-[#e05a2b] shadow-[#FF6B35]/20"
+                    : "bg-neutral-800 text-white hover:bg-neutral-700"
+                }`}
+              >
+                Got it
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

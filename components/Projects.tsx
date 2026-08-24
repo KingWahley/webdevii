@@ -69,10 +69,17 @@ const defaultProjects: ProjectItem[] = [
 export default function Projects({ projects: initialProjects }: ProjectsProps) {
   const [showAll, setShowAll] = useState(false);
 
-  const projectList =
+  const rawList =
     initialProjects && initialProjects.length > 0
       ? initialProjects
       : defaultProjects;
+
+  const projectList = [...rawList].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+  );
+
+  const INITIAL_DISPLAY_COUNT = 5;
+  const hasMore = projectList.length > INITIAL_DISPLAY_COUNT;
 
   const handleViewMore = () => {
     setShowAll(true);
@@ -85,7 +92,7 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
 
   const visibleProjects = showAll
     ? projectList
-    : projectList.filter((p) => !p.initially_hidden);
+    : projectList.slice(0, INITIAL_DISPLAY_COUNT);
 
   return (
     <section id="projects" className="space-y-12">
@@ -145,13 +152,13 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
       </div>
 
       {/* View More Projects Button */}
-      {!showAll && projectList.some((p) => p.initially_hidden) && (
+      {!showAll && hasMore && (
         <div className="flex justify-center mt-12" id="view-more-container">
           <button
             id="view-more-projects"
             onClick={handleViewMore}
             type="button"
-            className="px-8 py-3.5 border border-[#262626] rounded-full hover:border-[#FF6B35] hover:text-[#FF6B35] text-neutral-400 font-bold transition duration-300 uppercase tracking-wider text-xs pointer-events-auto"
+            className="px-8 py-3.5 border border-[#262626] rounded-full hover:border-[#FF6B35] hover:text-[#FF6B35] text-neutral-400 font-bold transition duration-300 uppercase tracking-wider text-xs pointer-events-auto cursor-pointer"
           >
             View More Projects
           </button>

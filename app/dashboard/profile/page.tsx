@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
@@ -28,6 +29,7 @@ const DEFAULT = {
 };
 
 export default function ProfileManagerPage() {
+  const [mounted, setMounted] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
@@ -38,6 +40,7 @@ export default function ProfileManagerPage() {
 
   // ─── Load profile on mount ──────────────────────────────────────────────────
   useEffect(() => {
+    setMounted(true);
     async function loadProfile() {
       const supabase = createClient();
       const { data, error } = await supabase.from("profiles").select("*").limit(1).single();
@@ -307,23 +310,34 @@ export default function ProfileManagerPage() {
       </form>
 
       {/* Feedback Modal */}
-      {modal.isOpen && (
-        <div className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#161616] border border-[#262626] rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 text-center shadow-2xl">
-            <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl border border-[#262626]">
-              {modal.type === "success" ? <span className="text-emerald-400">✓</span> : <span className="text-red-400">✗</span>}
+      {mounted &&
+        modal.isOpen &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setModal({ ...modal, isOpen: false })}
+          >
+            <div
+              className="bg-[#161616] border border-[#262626] rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 text-center shadow-2xl animate-fade-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl border border-[#262626]">
+                {modal.type === "success" ? <span className="text-emerald-400">✓</span> : <span className="text-red-400">✗</span>}
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-extrabold text-white font-display">{modal.title}</h3>
+                <p className="text-xs text-neutral-400 leading-relaxed">{modal.message}</p>
+              </div>
+              <button type="button" onClick={() => setModal({ ...modal, isOpen: false })}
+                className={`w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${modal.type === "success" ? "bg-[#FF6B35] text-neutral-950 hover:bg-[#e05a2b]" : "bg-neutral-800 text-white hover:bg-neutral-700"}`}>
+                Continue
+              </button>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-extrabold text-white font-display">{modal.title}</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">{modal.message}</p>
-            </div>
-            <button type="button" onClick={() => setModal({ ...modal, isOpen: false })}
-              className={`w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${modal.type === "success" ? "bg-[#FF6B35] text-neutral-950 hover:bg-[#e05a2b]" : "bg-neutral-800 text-white hover:bg-neutral-700"}`}>
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
