@@ -90,97 +90,100 @@ export default function SmoothScroll({
       }, 200);
     }
 
-    // 1. Hero entrance
-    gsap.fromTo(
-      ".hero-element",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.1,
-        stagger: 0.12,
-        ease: "power3.out",
-        delay: 0.15,
-      }
-    );
-
-    // 2. Project cards reveal
-    const projectCards = gsap.utils.toArray<HTMLElement>(".project-card");
-    projectCards.forEach((card) => {
+    // GSAP context for safe React hot-reloads and cleanup
+    const ctx = gsap.context(() => {
+      // 1. Hero entrance
       gsap.fromTo(
-        card,
-        { y: 50, opacity: 0 },
+        ".hero-element",
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.1,
+          stagger: 0.12,
+          ease: "power3.out",
+          delay: 0.15,
+        }
+      );
+
+      // 2. Project cards reveal
+      const projectCards = gsap.utils.toArray<HTMLElement>(".project-card");
+      projectCards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.85,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
+
+      // 3. Tool box stagger
+      gsap.fromTo(
+        ".tool-card",
+        { y: 30, opacity: 0, scale: 0.96 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.65,
+          stagger: 0.06,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#tools",
+            start: "top 85%",
+          },
+        }
+      );
+
+      // 4. Design thoughts stagger
+      gsap.fromTo(
+        ".thought-card",
+        { y: 45, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 0.85,
+          stagger: 0.12,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            toggleActions: "play none none none",
+            trigger: "#thoughts",
+            start: "top 85%",
+          },
+        }
+      );
+
+      // 5. Contact form stagger
+      gsap.fromTo(
+        ".contact-element",
+        { y: 35, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#contact",
+            start: "top 85%",
           },
         }
       );
     });
 
-    // 3. Tool box stagger
-    gsap.fromTo(
-      ".tool-card",
-      { y: 30, opacity: 0, scale: 0.96 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.65,
-        stagger: 0.06,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#tools",
-          start: "top 85%",
-        },
-      }
-    );
-
-    // 4. Design thoughts stagger
-    gsap.fromTo(
-      ".thought-card",
-      { y: 45, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.85,
-        stagger: 0.12,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#thoughts",
-          start: "top 85%",
-        },
-      }
-    );
-
-    // 5. Contact form stagger
-    gsap.fromTo(
-      ".contact-element",
-      { y: 35, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#contact",
-          start: "top 85%",
-        },
-      }
-    );
-
     return () => {
       document.removeEventListener("click", handleAnchorClick);
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      ctx.revert();
     };
   }, []);
 

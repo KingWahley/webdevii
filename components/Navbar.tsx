@@ -7,6 +7,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const isBlog = pathname?.startsWith("/blog");
 
+  // Hide the floating public portfolio navbar on dashboard and login pages
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
+    return null;
+  }
+
   return (
     <header className="fixed top-6 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
       <nav className="flex items-center justify-around sm:justify-center w-[92%] sm:w-auto max-w-[420px] sm:max-w-none gap-2 sm:gap-3 px-6 sm:px-5 py-3 sm:py-2.5 bg-[#161616]/95 border border-[#262626]/90 rounded-full backdrop-blur-xl shadow-2xl pointer-events-auto transition-all duration-300">

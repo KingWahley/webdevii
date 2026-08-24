@@ -1,19 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/lib/blog-data";
+import { getBlogs } from "@/app/actions/blogs";
+import type { BlogArticle } from "@/lib/types/database.types";
 
 const categories = ["All", "Web Design", "Frontend Engineering", "UI/UX Systems", "AI & Tech"] as const;
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [posts, setPosts] = useState<BlogArticle[]>(
+    blogPosts.map((b) => ({
+      id: b.id,
+      slug: b.slug,
+      title: b.title,
+      category: b.category,
+      read_time: b.readTime,
+      date: b.date,
+      excerpt: b.excerpt,
+      tags: b.tags,
+      sections: b.sections,
+      published: true,
+    }))
+  );
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const livePosts = await getBlogs();
+        if (livePosts && livePosts.length > 0) {
+          setPosts(livePosts);
+        }
+      } catch (err) {
+        console.error("Live blogs load error", err);
+      }
+    }
+    load();
+  }, []);
 
   const filteredPosts =
     selectedCategory === "All"
-      ? blogPosts
-      : blogPosts.filter((post) => post.category === selectedCategory);
+      ? posts
+      : posts.filter((post) => post.category === selectedCategory);
 
   return (
     <div className="bg-dark text-neutral-100 min-h-screen relative pb-12">
@@ -71,7 +101,7 @@ export default function BlogPage() {
                     {post.category}
                   </span>
                   <span className="text-neutral-500 font-semibold">
-                    {post.readTime}
+                    {post.read_time}
                   </span>
                 </div>
                 <time className="text-neutral-500 font-bold uppercase tracking-wider">

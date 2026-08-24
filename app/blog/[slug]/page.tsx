@@ -3,7 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Footer from "@/components/Footer";
-import { blogPosts, getBlogPostBySlug, getAllBlogSlugs } from "@/lib/blog-data";
+import { getAllBlogSlugs } from "@/lib/blog-data";
+import { getBlogBySlug, getBlogs } from "@/app/actions/blogs";
 
 interface Props {
   params: {
@@ -11,14 +12,11 @@ interface Props {
   };
 }
 
-export function generateStaticParams() {
-  return getAllBlogSlugs().map((slug) => ({
-    slug,
-  }));
-}
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
-export function generateMetadata({ params }: Props): Metadata {
-  const post = getBlogPostBySlug(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getBlogBySlug(params.slug);
   if (!post) {
     return {
       title: "Article Not Found - Peter Olawale",
@@ -31,22 +29,23 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function BlogPostDetail({ params }: Props) {
-  const post = getBlogPostBySlug(params.slug);
+export default async function BlogPostDetail({ params }: Props) {
+  const [post, allBlogs] = await Promise.all([
+    getBlogBySlug(params.slug),
+    getBlogs(),
+  ]);
 
   if (!post) {
     notFound();
   }
 
   // Find related posts (other posts)
-  const relatedPosts = blogPosts
+  const relatedPosts = allBlogs
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
 
   return (
     <div className="bg-dark text-neutral-100 min-h-screen relative pb-12">
-
-
       {/* Main Content Container */}
       <main className="max-w-3xl mx-auto px-6 pt-28 sm:pt-36 pb-16 space-y-12">
         {/* Article Header */}
@@ -55,7 +54,7 @@ export default function BlogPostDetail({ params }: Props) {
             <span className="px-3.5 py-1.5 rounded-full bg-[#161616] border border-[#262626] text-[#FF6B35] font-bold uppercase tracking-wider">
               {post.category}
             </span>
-            <span className="text-neutral-500 font-medium">{post.readTime}</span>
+            <span className="text-neutral-500 font-medium">{post.read_time}</span>
             <span className="text-neutral-700">•</span>
             <time className="text-neutral-500 font-medium">{post.date}</time>
           </div>
@@ -91,7 +90,7 @@ export default function BlogPostDetail({ params }: Props) {
 
         {/* Article Body */}
         <div className="space-y-10 border-t border-[#262626] pt-10">
-          {post.sections.map((section, idx) => (
+          {(post.sections || []).map((section, idx) => (
             <section key={idx} className="space-y-6">
               {section.heading && (
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-display">
@@ -99,7 +98,7 @@ export default function BlogPostDetail({ params }: Props) {
                 </h2>
               )}
 
-              {section.paragraphs.map((para, pIdx) => (
+              {(section.paragraphs || []).map((para, pIdx) => (
                 <p
                   key={pIdx}
                   className="text-neutral-300 text-base sm:text-lg leading-relaxed font-sans"
@@ -114,7 +113,7 @@ export default function BlogPostDetail({ params }: Props) {
                 </blockquote>
               )}
 
-              {section.keyTakeaways && (
+              {section.keyTakeaways && section.keyTakeaways.length > 0 && (
                 <div className="my-6 p-6 bg-[#161616] border border-[#262626] rounded-2xl space-y-3">
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#FF6B35] font-display">
                     Key Takeaways
@@ -134,21 +133,23 @@ export default function BlogPostDetail({ params }: Props) {
         </div>
 
         {/* Tags */}
-        <div className="border-t border-[#262626] pt-8">
-          <h4 className="text-xs uppercase font-bold text-neutral-500 tracking-wider mb-4">
-            Tags
-          </h4>
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-3.5 py-1.5 rounded-full bg-[#161616] border border-[#262626] text-xs text-neutral-400 font-medium"
-              >
-                #{tag}
-              </span>
-            ))}
+        {post.tags && post.tags.length > 0 && (
+          <div className="border-t border-[#262626] pt-8">
+            <h4 className="text-xs uppercase font-bold text-neutral-500 tracking-wider mb-4">
+              Tags
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3.5 py-1.5 rounded-full bg-[#161616] border border-[#262626] text-xs text-neutral-400 font-medium"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Navigation to Related Posts */}
         {relatedPosts.length > 0 && (

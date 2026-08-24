@@ -3,66 +3,76 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { ProjectItem } from "@/lib/types/database.types";
 
-interface Project {
-  id: string;
-  title: string;
-  url: string;
-  domain: string;
-  image: string;
-  initiallyHidden?: boolean;
+interface ProjectsProps {
+  projects?: ProjectItem[];
 }
 
-const projects: Project[] = [
+const defaultProjects: ProjectItem[] = [
   {
     id: "leisure-sports-atv",
     title: "Nautica beach ATV",
     url: "https://leisuresportsatv.com",
     domain: "leisuresportsatv.com",
-    image: "/beach_atv_thumbnail.png",
+    image_url: "/beach_atv_thumbnail.png",
+    initially_hidden: false,
+    sort_order: 1,
   },
   {
     id: "leisure-sports-paintball",
     title: "Nautica beach soccer and paintball",
     url: "https://Nautica.leisuresportspaintball.com",
     domain: "Nautica.leisuresportspaintball.com",
-    image: "/beach_soccer_thumbnail.png",
+    image_url: "/beach_soccer_thumbnail.png",
+    initially_hidden: false,
+    sort_order: 2,
   },
   {
     id: "leisure-sports-nike-lake",
     title: "Leisure sports Nike Lake",
     url: "https://Nike-Lake.leisuresportsatv.com",
     domain: "Nike-Lake.leisuresportsatv.com",
-    image: "/nike_lake_thumbnail.png",
+    image_url: "/nike_lake_thumbnail.png",
+    initially_hidden: false,
+    sort_order: 3,
   },
   {
     id: "play-padel-ikoyi",
     title: "Play Padel ikoyi",
     url: "https://ikoyi.playpadelltd.com",
     domain: "ikoyi.playpadelltd.com",
-    image: "/play_padel_thumbnail.png",
-    initiallyHidden: true,
+    image_url: "/play_padel_thumbnail.png",
+    initially_hidden: true,
+    sort_order: 4,
   },
   {
     id: "labs-pest-control",
     title: "Labs Pest Control",
     url: "https://www.labspestcontrol.com/",
     domain: "labspestcontrol.com",
-    image: "/pest_control_thumbnail.png",
-    initiallyHidden: true,
+    image_url: "/pest_control_thumbnail.png",
+    initially_hidden: true,
+    sort_order: 5,
   },
   {
     id: "kinknot",
     title: "Kinknot",
     url: "https://www.kinknot.com/",
     domain: "kinknot.com",
-    image: "/kinknot_thumbnail.png",
-    initiallyHidden: true,
+    image_url: "/kinknot_thumbnail.png",
+    initially_hidden: true,
+    sort_order: 6,
   },
 ];
 
-export default function Projects() {
+export default function Projects({ projects: initialProjects }: ProjectsProps) {
   const [showAll, setShowAll] = useState(false);
+
+  const projectList =
+    initialProjects && initialProjects.length > 0
+      ? initialProjects
+      : defaultProjects;
 
   const handleViewMore = () => {
     setShowAll(true);
@@ -74,8 +84,8 @@ export default function Projects() {
   };
 
   const visibleProjects = showAll
-    ? projects
-    : projects.filter((p) => !p.initiallyHidden);
+    ? projectList
+    : projectList.filter((p) => !p.initially_hidden);
 
   return (
     <section id="projects" className="space-y-12">
@@ -99,7 +109,7 @@ export default function Projects() {
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-2xl overflow-hidden bg-[#161616] border border-neutral-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 relative">
                 <Image
-                  src={project.image}
+                  src={project.image_url}
                   alt={project.title}
                   fill
                   className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
@@ -135,7 +145,7 @@ export default function Projects() {
       </div>
 
       {/* View More Projects Button */}
-      {!showAll && (
+      {!showAll && projectList.some((p) => p.initially_hidden) && (
         <div className="flex justify-center mt-12" id="view-more-container">
           <button
             id="view-more-projects"

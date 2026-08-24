@@ -1,6 +1,31 @@
 import Image from "next/image";
+import type { Profile } from "@/lib/types/database.types";
 
-export default function Hero() {
+interface HeroProps {
+  profile?: Profile;
+}
+
+export default function Hero({ profile }: HeroProps) {
+  const name = profile?.name || "Peter Olawale";
+  const title = profile?.title || "Software Engineer";
+  const shortBio =
+    profile?.bio ||
+    "I help businesses build websites that serve as powerful sales machines. Clean design, fast performance, and strategic structure.";
+  const fullIntro =
+    profile?.full_intro ||
+    "I’m Peter, a developer and designer focused on creating clean, modern, and engaging digital experiences. I help businesses transform their ideas into responsive websites and applications through thoughtful design and powerful technology. When I'm not working, I stay curious through tech blogs, play football and unwind with video games.";
+  const avatarUrl = profile?.avatar_url || "/profile_portrait.png";
+  const experienceYears = profile?.experience_years || "+12";
+  const projectsCount = profile?.projects_count || "+46";
+  const clientsCount = profile?.clients_count || "+20";
+  const instagramUrl =
+    profile?.instagram_url ||
+    "https://www.instagram.com/webdevii?igsh=MXh5c2FxYTZpc3R0aQ%3D%3D&utm_source=qr";
+  const githubUrl = profile?.github_url || "https://github.com/KingWahley";
+  const linkedinUrl =
+    profile?.linkedin_url || "https://www.linkedin.com/in/olawale-peter-5898a9249/";
+  const email = profile?.email || "kingwahley@gmail.com";
+
   return (
     <header className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch lg:h-[60vh] lg:min-h-[580px]">
       {/* Left Profile Card */}
@@ -9,8 +34,8 @@ export default function Hero() {
           {/* Portrait Image Frame */}
           <div className="relative overflow-hidden rounded-[2rem] h-[280px] sm:h-[320px] lg:h-auto lg:flex-1 lg:min-h-[180px] mb-4 bg-neutral-100 shadow-inner">
             <Image
-              src="/profile_portrait.png"
-              alt="Peter Olawale"
+              src={avatarUrl}
+              alt={name}
               fill
               priority
               className="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-105 group-hover:scale-100"
@@ -19,22 +44,22 @@ export default function Hero() {
 
           {/* Name */}
           <h1 className="text-2xl font-extrabold tracking-tight text-neutral-950 font-display leading-tight mb-0.5">
-            Peter Olawale
+            {name}
           </h1>
 
           {/* Title on mobile: Software Engineer */}
           <p className="text-xs uppercase tracking-wider font-extrabold text-[#FF6B35] font-display mb-2.5 lg:hidden">
-            Software Engineer
+            {title}
           </p>
 
           {/* Full Intro text on mobile */}
           <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed font-medium lg:hidden">
-            I’m Peter, a developer and designer focused on creating clean, modern, and engaging digital experiences. I help businesses transform their ideas into responsive websites and applications through thoughtful design and powerful technology. When I&apos;m not working, I stay curious through tech blogs, play football and unwind with video games.
+            {fullIntro}
           </p>
 
           {/* Short card bio (Desktop only) */}
           <p className="text-neutral-500 text-xs leading-relaxed font-medium hidden lg:block">
-            I help businesses build websites that serve as powerful sales machines. Clean design, fast performance, and strategic structure.
+            {shortBio}
           </p>
         </div>
 
@@ -65,7 +90,7 @@ export default function Hero() {
           <div className="flex justify-between items-center gap-3 mt-4">
             {/* Instagram */}
             <a
-              href="https://www.instagram.com/webdevii?igsh=MXh5c2FxYTZpc3R0aQ%3D%3D&utm_source=qr"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-700 hover:text-white hover:bg-[#FF6B35] hover:border-[#FF6B35] transition-all duration-300"
@@ -77,7 +102,7 @@ export default function Hero() {
             </a>
             {/* GitHub */}
             <a
-              href="https://github.com/KingWahley"
+              href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-700 hover:text-white hover:bg-[#FF6B35] hover:border-[#FF6B35] transition-all duration-300"
@@ -89,7 +114,7 @@ export default function Hero() {
             </a>
             {/* LinkedIn */}
             <a
-              href="https://www.linkedin.com/in/olawale-peter-5898a9249/"
+              href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-700 hover:text-white hover:bg-[#FF6B35] hover:border-[#FF6B35] transition-all duration-300"
@@ -101,7 +126,7 @@ export default function Hero() {
             </a>
             {/* Email */}
             <a
-              href="mailto:kingwahley@gmail.com"
+              href={`mailto:${email}`}
               className="w-12 h-12 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-700 hover:text-white hover:bg-[#FF6B35] hover:border-[#FF6B35] transition-all duration-300"
               aria-label="Email"
             >
@@ -128,12 +153,18 @@ export default function Hero() {
         {/* Titles & Paragraph (Desktop only) */}
         <div className="space-y-4 hidden lg:block">
           <h2 className="text-7xl md:text-8xl font-extrabold tracking-tight text-white uppercase leading-[0.85] font-display hero-element">
-            Software
-            <br />
-            <span className="text-[#2C2C2C]">Engineer</span>
+            {title.includes(" ") ? (
+              <>
+                {title.split(" ")[0]}
+                <br />
+                <span className="text-[#2C2C2C]">{title.split(" ").slice(1).join(" ")}</span>
+              </>
+            ) : (
+              title
+            )}
           </h2>
           <p className="text-neutral-400 text-lg sm:text-xl font-normal leading-relaxed max-w-2xl hero-element">
-            I’m Peter, a developer and designer focused on creating clean, modern, and engaging digital experiences. I help businesses transform their ideas into responsive websites and applications through thoughtful design and powerful technology. When I&apos;m not working, I stay curious through tech blogs, play football and unwind with video games.
+            {fullIntro}
           </p>
         </div>
 
@@ -141,7 +172,7 @@ export default function Hero() {
         <div className="grid grid-cols-3 gap-6 border-y border-[#262626] py-4 lg:py-3 hero-element">
           <div className="space-y-1">
             <div className="text-4xl sm:text-5xl font-black text-white tracking-tight font-display">
-              +12
+              {experienceYears}
             </div>
             <div className="text-[10px] sm:text-xs uppercase text-neutral-500 font-bold tracking-wider leading-snug">
               Years of
@@ -151,7 +182,7 @@ export default function Hero() {
           </div>
           <div className="space-y-1">
             <div className="text-4xl sm:text-5xl font-black text-white tracking-tight font-display">
-              +46
+              {projectsCount}
             </div>
             <div className="text-[10px] sm:text-xs uppercase text-neutral-500 font-bold tracking-wider leading-snug">
               Projects
@@ -161,7 +192,7 @@ export default function Hero() {
           </div>
           <div className="space-y-1">
             <div className="text-4xl sm:text-5xl font-black text-white tracking-tight font-display">
-              +20
+              {clientsCount}
             </div>
             <div className="text-[10px] sm:text-xs uppercase text-neutral-500 font-bold tracking-wider leading-snug">
               Happy

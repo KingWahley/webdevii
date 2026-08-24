@@ -1,8 +1,27 @@
 import Link from "next/link";
 import { blogPosts } from "@/lib/blog-data";
+import type { BlogArticle } from "@/lib/types/database.types";
 
-export default function Thoughts() {
-  const featuredThoughts = blogPosts.slice(0, 3);
+interface ThoughtsProps {
+  blogs?: BlogArticle[];
+}
+
+export default function Thoughts({ blogs }: ThoughtsProps) {
+  const articles =
+    blogs && blogs.length > 0
+      ? blogs.slice(0, 3)
+      : blogPosts.slice(0, 3).map((b) => ({
+          id: b.id,
+          slug: b.slug,
+          title: b.title,
+          category: b.category,
+          read_time: b.readTime,
+          date: b.date,
+          excerpt: b.excerpt,
+          tags: b.tags,
+          sections: b.sections,
+          published: true,
+        }));
 
   return (
     <section id="thoughts" className="space-y-12">
@@ -35,7 +54,7 @@ export default function Thoughts() {
       </div>
 
       <div className="space-y-4">
-        {featuredThoughts.map((thought, index) => (
+        {articles.map((thought, index) => (
           <div
             key={thought.id}
             className={`group border-b border-[#262626] ${

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { submitContactMessage } from "@/app/actions/messages";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -9,16 +10,34 @@ export default function Contact() {
     subject: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submit logic / integration
+    setSubmitting(true);
+
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("email", formData.email);
+    data.append("subject", formData.subject || "Project Inquiry");
+    data.append("message", formData.message);
+
+    try {
+      await submitContactMessage(data);
+      setSent(true);
+    } catch (err) {
+      console.error("Message save error", err);
+    }
+
+    // Also trigger direct email client as fallback
     const mailto = `mailto:kingwahley@gmail.com?subject=${encodeURIComponent(
       formData.subject || "Project Inquiry"
     )}&body=${encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
     )}`;
     window.location.href = mailto;
+    setSubmitting(false);
   };
 
   return (
@@ -28,6 +47,12 @@ export default function Contact() {
         <br />
         <span className="text-[#2C2C2C]">Together</span>
       </h2>
+
+      {sent && (
+        <div className="p-4 bg-emerald-950/70 border border-emerald-800 rounded-2xl text-emerald-300 text-xs font-bold uppercase tracking-wider">
+          ✓ Message saved to inbox and sent to Peter!
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 contact-element">
@@ -100,9 +125,10 @@ export default function Contact() {
 
         <button
           type="submit"
-          className="bg-[#FF6B35] text-neutral-950 font-black uppercase py-5 rounded-2xl w-full text-center hover:bg-[#e05a2b] active:scale-[0.99] transition duration-300 tracking-wider contact-element cursor-pointer"
+          disabled={submitting}
+          className="bg-[#FF6B35] text-neutral-950 font-black uppercase py-5 rounded-2xl w-full text-center hover:bg-[#e05a2b] active:scale-[0.99] transition duration-300 tracking-wider contact-element cursor-pointer disabled:opacity-50"
         >
-          Send Message
+          {submitting ? "Sending..." : "Send Message"}
         </button>
       </form>
     </section>
