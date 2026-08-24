@@ -6,6 +6,8 @@ interface Tool {
 
 const tools: Tool[] = [
   { name: "Figma", category: "Design & Prototyping", iconClass: "devicon-figma-plain" },
+  { name: "Photoshop", category: "Photo & Graphics", iconClass: "devicon-photoshop-plain" },
+  { name: "Adobe XD", category: "UI/UX Prototyping", iconClass: "devicon-xd-plain" },
   { name: "HTML", category: "Markup Language", iconClass: "devicon-html5-plain" },
   { name: "Tailwind CSS", category: "CSS Framework", iconClass: "devicon-tailwindcss-original" },
   { name: "JavaScript", category: "Programming Language", iconClass: "devicon-javascript-plain" },
@@ -23,7 +25,7 @@ const tools: Tool[] = [
 export default function ToolBox() {
   return (
     <section id="tools" className="space-y-12">
-      <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.85] mb-12">
+      <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.95] sm:leading-[0.85] mb-8 sm:mb-12">
         My
         <br />
         <span className="text-[#2C2C2C]">Tool Box</span>

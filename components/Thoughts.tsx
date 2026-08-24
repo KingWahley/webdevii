@@ -1,41 +1,13 @@
 import Link from "next/link";
-
-interface Thought {
-  title: string;
-  description: string;
-  date: string;
-  url: string;
-}
-
-const thoughts: Thought[] = [
-  {
-    title: "Starting and Growing a Career in Web Design",
-    description:
-      "An in-depth guide on how to kickstart your creative career, master high-end digital design systems, build an authoritative design portfolio, and attract high-paying clients.",
-    date: "Apr 15, 2026",
-    url: "/blog#starting-career-web-design",
-  },
-  {
-    title: "Create a Landing Page That Performs Great",
-    description:
-      "Key design principles and copywriting strategies to maximize conversions. Learn how visual hierarchy, typography sizing, and strategic micro-interactions guide user behavior.",
-    date: "Mar 12, 2026",
-    url: "/blog#create-landing-page",
-  },
-  {
-    title: "How Can Designers Prepare for the Future?",
-    description:
-      "Exploring the intersection of AI tools and user interface design. Learn how designers can leverage creative engineering to build unique interactive experiences.",
-    date: "Feb 28, 2026",
-    url: "/blog#designers-prepare-future",
-  },
-];
+import { blogPosts } from "@/lib/blog-data";
 
 export default function Thoughts() {
+  const featuredThoughts = blogPosts.slice(0, 3);
+
   return (
     <section id="thoughts" className="space-y-12">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
-        <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.85]">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.95] sm:leading-[0.85]">
           Design
           <br />
           <span className="text-[#2C2C2C]">Thoughts</span>
@@ -63,26 +35,28 @@ export default function Thoughts() {
       </div>
 
       <div className="space-y-4">
-        {thoughts.map((thought, index) => (
+        {featuredThoughts.map((thought, index) => (
           <div
-            key={thought.title}
+            key={thought.id}
             className={`group border-b border-[#262626] ${
               index === 0 ? "pb-8" : "py-8"
             } flex items-start justify-between gap-6 hover:border-neutral-700 transition-colors duration-300 thought-card`}
           >
             <div className="flex-1 space-y-3">
-              <h4 className="text-2xl font-extrabold text-white group-hover:text-[#FF6B35] transition-colors duration-300 font-display">
-                {thought.title}
-              </h4>
+              <Link href={`/blog/${thought.slug}`} className="block group">
+                <h4 className="text-2xl font-extrabold text-white group-hover:text-[#FF6B35] transition-colors duration-300 font-display">
+                  {thought.title}
+                </h4>
+              </Link>
               <p className="text-neutral-400 text-sm md:text-base leading-relaxed max-w-3xl">
-                {thought.description}
+                {thought.excerpt}
               </p>
               <div className="flex items-center gap-6 pt-2">
                 <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">
                   {thought.date}
                 </span>
                 <Link
-                  href={thought.url}
+                  href={`/blog/${thought.slug}`}
                   className="text-xs text-white font-extrabold uppercase tracking-wider underline hover:text-[#FF6B35] transition-colors"
                 >
                   Read more
@@ -90,7 +64,7 @@ export default function Thoughts() {
               </div>
             </div>
             <Link
-              href={thought.url}
+              href={`/blog/${thought.slug}`}
               className="w-12 h-12 rounded-2xl border border-[#262626] flex items-center justify-center text-neutral-500 group-hover:text-[#FF6B35] group-hover:border-[#FF6B35] group-hover:rotate-45 transition duration-300 mt-1"
               aria-label={`Read article: ${thought.title}`}
             >

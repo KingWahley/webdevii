@@ -1,12 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isBlog = pathname?.startsWith("/blog");
+
   return (
-    <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none animate-fade-in">
-      <nav className="flex items-center justify-around sm:justify-center w-[92%] sm:w-auto max-w-[420px] sm:max-w-none gap-2 sm:gap-3 px-6 sm:px-5 py-3 sm:py-2.5 bg-[#161616]/90 border border-[#262626]/90 rounded-full backdrop-blur-md shadow-2xl pointer-events-auto">
+    <header className="fixed top-6 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
+      <nav className="flex items-center justify-around sm:justify-center w-[92%] sm:w-auto max-w-[420px] sm:max-w-none gap-2 sm:gap-3 px-6 sm:px-5 py-3 sm:py-2.5 bg-[#161616]/95 border border-[#262626]/90 rounded-full backdrop-blur-xl shadow-2xl pointer-events-auto transition-all duration-300">
+        {/* Home Link */}
         <Link
           href="/#home"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all duration-300"
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+            pathname === "/" && !isBlog
+              ? "text-white bg-neutral-900"
+              : "text-neutral-400 hover:text-white hover:bg-neutral-900"
+          }`}
           title="Home"
           aria-label="Home"
         >
@@ -24,6 +35,8 @@ export default function Navbar() {
             />
           </svg>
         </Link>
+
+        {/* Projects Link */}
         <Link
           href="/#projects"
           className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all duration-300"
@@ -44,13 +57,14 @@ export default function Navbar() {
             />
           </svg>
         </Link>
+
+        {/* Tools Link */}
         <Link
           href="/#tools"
           className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all duration-300"
           title="Tools"
           aria-label="Tools"
         >
-          {/* Clean Wrench Tool Icon */}
           <svg
             className="w-5 h-5"
             fill="none"
@@ -65,13 +79,18 @@ export default function Navbar() {
             />
           </svg>
         </Link>
+
+        {/* Blog Link */}
         <Link
           href="/blog"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all duration-300"
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+            isBlog
+              ? "text-[#FF6B35] bg-neutral-900 shadow-inner"
+              : "text-neutral-400 hover:text-white hover:bg-neutral-900"
+          }`}
           title="Blog"
           aria-label="Blog"
         >
-          {/* Book / Article Icon */}
           <svg
             className="w-5 h-5"
             fill="none"
@@ -86,6 +105,8 @@ export default function Navbar() {
             />
           </svg>
         </Link>
+
+        {/* Contact Link */}
         <Link
           href="/#contact"
           className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all duration-300"
@@ -107,6 +128,6 @@ export default function Navbar() {
           </svg>
         </Link>
       </nav>
-    </div>
+    </header>
   );
 }

@@ -113,7 +113,7 @@ export default function Hero() {
       <div className="lg:col-span-2 flex flex-col justify-between lg:h-full gap-6">
         {/* Titles & Paragraph */}
         <div className="space-y-4">
-          <h2 className="text-7xl sm:text-8xl font-extrabold tracking-tight text-white uppercase leading-[0.85] font-display hero-element">
+          <h2 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight text-white uppercase leading-[0.95] sm:leading-[0.88] lg:leading-[0.85] font-display hero-element">
             Software
             <br />
             <span className="text-[#2C2C2C]">Engineer</span>

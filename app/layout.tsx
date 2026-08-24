@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
+import Navbar from "@/components/Navbar";
 import AgentationWrapper from "@/components/AgentationWrapper";
 import "./globals.css";
 
@@ -35,6 +36,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-dark text-neutral-100 min-h-screen relative pb-12 font-sans antialiased">
+        <Navbar />
         {children}
         <AgentationWrapper />
       </body>

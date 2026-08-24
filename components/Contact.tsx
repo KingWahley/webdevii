@@ -23,7 +23,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="space-y-12">
-      <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.85] mb-16">
+      <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase font-display leading-[0.95] sm:leading-[0.85] mb-12 sm:mb-16">
         Let&apos;s Work
         <br />
         <span className="text-[#2C2C2C]">Together</span>
