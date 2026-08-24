@@ -67,7 +67,7 @@ export default function Hero({ profile }: HeroProps) {
         <div className="mt-4">
           {/* Custom SVG loops path */}
           <svg
-            className="w-full h-12 my-4 text-[#FF6B35]"
+            className="hidden lg:block w-full h-12 my-4 text-[#FF6B35]"
             viewBox="0 0 200 40"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

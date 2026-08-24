@@ -104,7 +104,7 @@ export default function MessagesManagerPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Messages List */}
-        <div className="md:col-span-1 bg-[#161616] border border-[#262626] rounded-3xl p-4 space-y-2 h-[600px] overflow-y-auto">
+        <div className="md:col-span-1 bg-[#161616] border border-[#262626] rounded-3xl p-4 space-y-2 h-72 md:h-[600px] overflow-y-auto">
           {loading ? (
             <p className="p-4 text-xs text-neutral-500">Loading inbox...</p>
           ) : filteredMessages.length === 0 ? (
@@ -152,7 +152,7 @@ export default function MessagesManagerPage() {
         </div>
 
         {/* Message Detail View */}
-        <div className="md:col-span-2 bg-[#161616] border border-[#262626] rounded-3xl p-6 sm:p-8 flex flex-col justify-between h-[600px]">
+        <div className="md:col-span-2 bg-[#161616] border border-[#262626] rounded-3xl p-5 sm:p-8 flex flex-col justify-between min-h-[380px] md:h-[600px]">
           {selectedMessage ? (
             <div className="space-y-6 overflow-y-auto pr-2">
               <div className="flex items-start justify-between border-b border-[#262626] pb-5">
