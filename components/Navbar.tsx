@@ -7,8 +7,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const isBlog = pathname?.startsWith("/blog");
 
-  // Hide the floating public portfolio navbar on dashboard and login pages
-  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
+  // Hide the floating public portfolio navbar on dashboard, login, and dedicated projects pages
+  if (
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/login") ||
+    pathname === "/projects"
+  ) {
     return null;
   }
 

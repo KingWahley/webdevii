@@ -7,6 +7,7 @@ import type { ProjectItem } from "@/lib/types/database.types";
 
 interface ProjectsProps {
   projects?: ProjectItem[];
+  showAllDefault?: boolean;
 }
 
 const defaultProjects: ProjectItem[] = [
@@ -66,8 +67,11 @@ const defaultProjects: ProjectItem[] = [
   },
 ];
 
-export default function Projects({ projects: initialProjects }: ProjectsProps) {
-  const [showAll, setShowAll] = useState(false);
+export default function Projects({
+  projects: initialProjects,
+  showAllDefault = false,
+}: ProjectsProps) {
+  const [showAll, setShowAll] = useState(showAllDefault);
 
   const rawList =
     initialProjects && initialProjects.length > 0
@@ -81,16 +85,17 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
   const INITIAL_DISPLAY_COUNT = 5;
   const hasMore = projectList.length > INITIAL_DISPLAY_COUNT;
 
-  const handleViewMore = () => {
+  const handleViewMore = (e: React.MouseEvent) => {
+    e.preventDefault();
     setShowAll(true);
     setTimeout(() => {
       if (typeof window !== "undefined") {
-        ScrollTrigger.refresh();
+        ScrollTrigger?.refresh?.();
       }
-    }, 100);
+    }, 50);
   };
 
-  const visibleProjects = showAll
+  const visibleProjects = showAll || showAllDefault
     ? projectList
     : projectList.slice(0, INITIAL_DISPLAY_COUNT);
 
@@ -111,28 +116,29 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
             rel="noopener noreferrer"
             className={`group border-b border-[#262626] ${
               index === 0 ? "pb-8" : "py-8"
-            } flex items-center justify-between hover:border-neutral-700 transition-colors duration-300 project-card block cursor-pointer`}
+            } flex items-center justify-between hover:border-neutral-700 transition-colors duration-300 project-card block cursor-pointer animate-fade-in`}
           >
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden bg-[#161616] border border-neutral-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 relative">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-[#161616] border border-neutral-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 relative shrink-0">
                 <Image
                   src={project.image_url}
                   alt={project.title}
                   fill
                   className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                  unoptimized={project.image_url.startsWith("http")}
                 />
               </div>
-              <div>
-                <h4 className="text-xl font-extrabold text-white group-hover:text-[#FF6B35] transition-colors duration-300 font-display">
+              <div className="min-w-0 flex-1">
+                <h4 className="text-lg sm:text-xl font-extrabold text-white group-hover:text-[#FF6B35] transition-colors duration-300 font-display truncate">
                   {project.title}
                 </h4>
-                <p className="text-sm text-neutral-500 mt-1 font-medium font-sans">
+                <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-medium font-sans truncate">
                   {project.domain}
                 </p>
               </div>
             </div>
 
-            <div className="w-12 h-12 rounded-2xl border border-[#262626] flex items-center justify-center text-neutral-500 group-hover:text-[#FF6B35] group-hover:border-[#FF6B35] group-hover:rotate-45 transition duration-300">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl border border-[#262626] flex items-center justify-center text-neutral-500 group-hover:text-[#FF6B35] group-hover:border-[#FF6B35] group-hover:rotate-45 transition duration-300 shrink-0 ml-4">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -152,7 +158,7 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
       </div>
 
       {/* View More Projects Button */}
-      {!showAll && hasMore && (
+      {!showAll && !showAllDefault && hasMore && (
         <div className="flex justify-center mt-12" id="view-more-container">
           <button
             id="view-more-projects"
@@ -160,7 +166,7 @@ export default function Projects({ projects: initialProjects }: ProjectsProps) {
             type="button"
             className="px-8 py-3.5 border border-[#262626] rounded-full hover:border-[#FF6B35] hover:text-[#FF6B35] text-neutral-400 font-bold transition duration-300 uppercase tracking-wider text-xs pointer-events-auto cursor-pointer"
           >
-            View More Projects
+            View More Projects ({projectList.length - INITIAL_DISPLAY_COUNT} More)
           </button>
         </div>
       )}
