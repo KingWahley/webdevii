@@ -7,19 +7,33 @@ export default function Hero() {
       <div className="lg:col-span-1 bg-white text-neutral-950 rounded-[2.5rem] p-6 flex flex-col justify-between border border-neutral-200 shadow-sm relative group overflow-hidden h-full hero-element">
         <div className="flex flex-col flex-1 min-h-0">
           {/* Portrait Image Frame */}
-          <div className="relative overflow-hidden rounded-[2rem] flex-1 min-h-[150px] mb-4 bg-neutral-100 shadow-inner">
+          <div className="relative overflow-hidden rounded-[2rem] h-[280px] sm:h-[320px] lg:h-auto lg:flex-1 lg:min-h-[180px] mb-4 bg-neutral-100 shadow-inner">
             <Image
               src="/profile_portrait.png"
               alt="Peter Olawale"
               fill
               priority
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-105 group-hover:scale-100"
+              className="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-105 group-hover:scale-100"
             />
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-neutral-950 font-display leading-tight mb-1">
+
+          {/* Name */}
+          <h1 className="text-2xl font-extrabold tracking-tight text-neutral-950 font-display leading-tight mb-0.5">
             Peter Olawale
           </h1>
-          <p className="text-neutral-500 text-xs leading-relaxed font-medium">
+
+          {/* Title on mobile: Software Engineer */}
+          <p className="text-xs uppercase tracking-wider font-extrabold text-[#FF6B35] font-display mb-2.5 lg:hidden">
+            Software Engineer
+          </p>
+
+          {/* Full Intro text on mobile */}
+          <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed font-medium lg:hidden">
+            I’m Peter, a developer and designer focused on creating clean, modern, and engaging digital experiences. I help businesses transform their ideas into responsive websites and applications through thoughtful design and powerful technology. When I&apos;m not working, I stay curious through tech blogs, play football and unwind with video games.
+          </p>
+
+          {/* Short card bio (Desktop only) */}
+          <p className="text-neutral-500 text-xs leading-relaxed font-medium hidden lg:block">
             I help businesses build websites that serve as powerful sales machines. Clean design, fast performance, and strategic structure.
           </p>
         </div>
@@ -111,9 +125,9 @@ export default function Hero() {
 
       {/* Right Content Grid */}
       <div className="lg:col-span-2 flex flex-col justify-between lg:h-full gap-6">
-        {/* Titles & Paragraph */}
-        <div className="space-y-4">
-          <h2 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight text-white uppercase leading-[0.95] sm:leading-[0.88] lg:leading-[0.85] font-display hero-element">
+        {/* Titles & Paragraph (Desktop only) */}
+        <div className="space-y-4 hidden lg:block">
+          <h2 className="text-7xl md:text-8xl font-extrabold tracking-tight text-white uppercase leading-[0.85] font-display hero-element">
             Software
             <br />
             <span className="text-[#2C2C2C]">Engineer</span>
